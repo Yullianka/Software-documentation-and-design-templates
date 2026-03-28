@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Пасажири - Taxi Service</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <a href="/" class="logo">Taxi Service</a>
+    <div class="nav-links">
+      <a href="/passengers.html">Пасажири</a>
+      <a href="/drivers.html">Водії</a>
+      <a href="/rides.html">Поїздки</a>
+    </div>
+  </nav>
+  <main class="container">
+    <h1>Пасажири</h1>
+    <button class="btn btn-primary" onclick="openCreateModal()">Додати пасажира</button>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Ім'я</th>
+          <th>Телефон</th>
+          <th>Рейтинг</th>
+          <th>Спосіб оплати</th>
+          <th>Дії</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </main>
+
+  <div class="modal-overlay" id="modal">
+    <div class="modal">
+      <h2 id="modalTitle">Додати пасажира</h2>
+      <form id="form" class="form" style="box-shadow:none;padding:0;margin:0;">
+        <input type="hidden" id="editId">
+        <div class="form-group">
+          <label for="name">Ім'я</label>
+          <input type="text" id="name" name="name" required>
+        </div>
+        <div class="form-group">
+          <label for="phone">Телефон</label>
+          <input type="text" id="phone" name="phone" required>
+        </div>
+        <div class="form-group">
+          <label for="rating">Рейтинг</label>
+          <input type="number" id="rating" name="rating" step="0.1" min="0" max="5" value="0">
+        </div>
+        <div class="form-group">
+          <label for="paymentMethod">Спосіб оплати</label>
+          <select id="paymentMethod" name="paymentMethod" required>
+            <option value="cash">Готівка</option>
+            <option value="card">Картка</option>
+          </select>
+        </div>
+        <div class="modal-actions">
+          <button type="submit" class="btn btn-primary">Зберегти</button>
+          <button type="button" class="btn" onclick="closeModal()">Скасувати</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const API = '/api/passengers';
+
+    async function loadData() {
+      const res = await fetch(API);
+      const data = await res.json();
+      const tbody = document.getElementById('tableBody');
+      tbody.innerHTML = data.map(p => `
+        <tr>
+          <td>${p.name}</td>
+          <td>${p.phone}</td>
+          <td>${p.rating}</td>
+          <td>${p.paymentMethod}</td>
+          <td class="actions">
+            <button class="btn btn-sm" onclick="openEditModal('${p._id}')">Редагувати</button>
+            <button class="btn btn-sm btn-danger" onclick="deleteItem('${p._id}')">Видалити</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function openCreateModal() {
+      document.getElementById('modalTitle').textContent = 'Додати пасажира';
+      document.getElementById('editId').value = '';
+      document.getElementById('form').reset();
+      document.getElementById('modal').classList.add('active');
+    }
+
+    async function openEditModal(id) {
+      const res = await fetch(`${API}/${id}`);
+      const p = await res.json();
+      document.getElementById('modalTitle').textContent = 'Редагувати пасажира';
+      document.getElementById('editId').value = p._id;
+      document.getElementById('name').value = p.name;
+      document.getElementById('phone').value = p.phone;
+      document.getElementById('rating').value = p.rating;
+      document.getElementById('paymentMethod').value = p.paymentMethod;
+      document.getElementById('modal').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('modal').classList.remove('active');
+    }
+
+    document.getElementById('form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const id = document.getElementById('editId').value;
+      const body = {
+        name: document.getElementById('name').value,
+        phone: document.getElementById('phone').value,
+        rating: parseFloat(document.getElementById('rating').value) || 0,
+        paymentMethod: document.getElementById('paymentMethod').value,
+      };
+      if (id) {
+        await fetch(`${API}/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+      } else {
+        await fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+      }
+      closeModal();
+      loadData();
+    });
+
+    async function deleteItem(id) {
+      if (!confirm('Видалити пасажира?')) return;
+      await fetch(`${API}/${id}`, { method: 'DELETE' });
+      loadData();
+    }
+
+    loadData();
+  </script>
+</body>
+</html>
