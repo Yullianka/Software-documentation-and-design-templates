@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Водії - Taxi Service</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <a href="/" class="logo">Taxi Service</a>
+    <div class="nav-links">
+      <a href="/passengers.html">Пасажири</a>
+      <a href="/drivers.html">Водії</a>
+      <a href="/rides.html">Поїздки</a>
+    </div>
+  </nav>
+  <main class="container">
+    <h1>Водії</h1>
+    <button class="btn btn-primary" onclick="openCreateModal()">Додати водія</button>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Ім'я</th>
+          <th>Телефон</th>
+          <th>Рейтинг</th>
+          <th>Номер ліцензії</th>
+          <th>Статус</th>
+          <th>Локація</th>
+          <th>Дії</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </main>
+
+  <div class="modal-overlay" id="modal">
+    <div class="modal">
+      <h2 id="modalTitle">Додати водія</h2>
+      <form id="form" class="form" style="box-shadow:none;padding:0;margin:0;">
+        <input type="hidden" id="editId">
+        <div class="form-group">
+          <label for="name">Ім'я</label>
+          <input type="text" id="name" name="name" required>
+        </div>
+        <div class="form-group">
+          <label for="phone">Телефон</label>
+          <input type="text" id="phone" name="phone" required>
+        </div>
+        <div class="form-group">
+          <label for="rating">Рейтинг</label>
+          <input type="number" id="rating" name="rating" step="0.1" min="0" max="5" value="0">
+        </div>
+        <div class="form-group">
+          <label for="licenseNumber">Номер ліцензії</label>
+          <input type="text" id="licenseNumber" name="licenseNumber" required>
+        </div>
+        <div class="form-group">
+          <label for="status">Статус</label>
+          <select id="status" name="status" required>
+            <option value="available">Available</option>
+            <option value="busy">Busy</option>
+            <option value="offline" selected>Offline</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="currentLocation">Поточна локація</label>
+          <input type="text" id="currentLocation" name="currentLocation">
+        </div>
+        <div class="modal-actions">
+          <button type="submit" class="btn btn-primary">Зберегти</button>
+          <button type="button" class="btn" onclick="closeModal()">Скасувати</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const API = '/api/drivers';
+
+    async function loadData() {
+      const res = await fetch(API);
+      const data = await res.json();
+      const tbody = document.getElementById('tableBody');
+      tbody.innerHTML = data.map(d => `
+        <tr>
+          <td>${d.name}</td>
+          <td>${d.phone}</td>
+          <td>${d.rating}</td>
+          <td>${d.licenseNumber}</td>
+          <td><span class="badge badge-${d.status}">${d.status}</span></td>
+          <td>${d.currentLocation || ''}</td>
+          <td class="actions">
+            <button class="btn btn-sm" onclick="openEditModal('${d._id}')">Редагувати</button>
+            <button class="btn btn-sm btn-danger" onclick="deleteItem('${d._id}')">Видалити</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function openCreateModal() {
+      document.getElementById('modalTitle').textContent = 'Додати водія';
+      document.getElementById('editId').value = '';
+      document.getElementById('form').reset();
+      document.getElementById('modal').classList.add('active');
+    }
+
+    async function openEditModal(id) {
+      const res = await fetch(`${API}/${id}`);
+      const d = await res.json();
+      document.getElementById('modalTitle').textContent = 'Редагувати водія';
+      document.getElementById('editId').value = d._id;
+      document.getElementById('name').value = d.name;
+      document.getElementById('phone').value = d.phone;
+      document.getElementById('rating').value = d.rating;
+      document.getElementById('licenseNumber').value = d.licenseNumber;
+      document.getElementById('status').value = d.status;
+      document.getElementById('currentLocation').value = d.currentLocation || '';
+      document.getElementById('modal').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('modal').classList.remove('active');
+    }
+
+    document.getElementById('form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const id = document.getElementById('editId').value;
+      const body = {
+        name: document.getElementById('name').value,
+        phone: document.getElementById('phone').value,
+        rating: parseFloat(document.getElementById('rating').value) || 0,
+        licenseNumber: document.getElementById('licenseNumber').value,
+        status: document.getElementById('status').value,
+        currentLocation: document.getElementById('currentLocation').value,
+      };
+      if (id) {
+        await fetch(`${API}/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+      } else {
+        await fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+      }
+      closeModal();
+      loadData();
+    });
+
+    async function deleteItem(id) {
+      if (!confirm('Видалити водія?')) return;
+      await fetch(`${API}/${id}`, { method: 'DELETE' });
+      loadData();
+    }
+
+    loadData();
+  </script>
+</body>
+</html>
