@@ -4,22 +4,22 @@ import { Document } from 'mongoose';
 @Schema({ timestamps: true })
 export class Driver extends Document {
   @Prop({ required: true })
-  name: string;
+  name!: string;
 
   @Prop({ required: true, unique: true })
-  phone: string;
+  phone!: string;
 
   @Prop({ default: 0 })
-  rating: number;
+  rating!: number;
 
   @Prop({ required: true, unique: true })
-  licenseNumber: string;
+  licenseNumber!: string;
 
   @Prop({ required: true, enum: ['available', 'busy', 'offline'], default: 'offline' })
-  status: string;
+  status!: string;
 
   @Prop()
-  currentLocation: string;
+  currentLocation!: string;
 }
 
 export const DriverSchema = SchemaFactory.createForClass(Driver);
