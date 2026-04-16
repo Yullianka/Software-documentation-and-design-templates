@@ -6,6 +6,7 @@ import { OUTPUT_STRATEGY } from './interfaces/output-strategy.interface';
 import { ConsoleOutputStrategy } from './strategies/console-output.strategy';
 import { KafkaOutputStrategy } from './strategies/kafka-output.strategy';
 import { RedisOutputStrategy } from './strategies/redis-output.strategy';
+import { FirebaseOutputStrategy } from './strategies/firebase-output.strategy';
 
 function resolveStrategyClass() {
   const configPath = path.resolve(process.cwd(), 'config/output.config.json');
@@ -16,6 +17,8 @@ function resolveStrategyClass() {
       return KafkaOutputStrategy;
     case 'redis':
       return RedisOutputStrategy;
+    case 'firebase':
+      return FirebaseOutputStrategy;
     default:
       return ConsoleOutputStrategy;
   }

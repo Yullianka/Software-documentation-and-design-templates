@@ -4,6 +4,7 @@ import { CsvReaderService } from '../dal/csv/csv-reader.service';
 import { ConsoleOutputStrategy } from '../output/strategies/console-output.strategy';
 import { KafkaOutputStrategy } from '../output/strategies/kafka-output.strategy';
 import { RedisOutputStrategy } from '../output/strategies/redis-output.strategy';
+import { FirebaseOutputStrategy } from '../output/strategies/firebase-output.strategy';
 import { IOutputStrategy } from '../output/interfaces/output-strategy.interface';
 
 function buildStrategy(): IOutputStrategy {
@@ -15,6 +16,8 @@ function buildStrategy(): IOutputStrategy {
       return new KafkaOutputStrategy();
     case 'redis':
       return new RedisOutputStrategy();
+    case 'firebase':
+      return new FirebaseOutputStrategy();
     default:
       return new ConsoleOutputStrategy();
   }

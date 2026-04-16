@@ -1,5 +1,5 @@
 {
-  "strategy": "console",
+  "strategy": "firebase",
   "kafka": {
     "brokers": [
       "localhost:9092"
@@ -11,5 +11,10 @@
     "host": "localhost",
     "port": 6379,
     "keyPrefix": "vendor-payment:"
+  },
+  "firebase": {
+    "projectId": "documentation-c6642",
+    "collection": "vendor-payments",
+    "keyFilePath": "config/documentation-c6642-firebase-adminsdk-fbsvc-fcb88128ef.json"
   }
 }

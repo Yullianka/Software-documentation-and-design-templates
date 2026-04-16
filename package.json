@@ -26,6 +26,7 @@
     "class-validator": "^0.15.1",
     "csv-parse": "^6.1.0",
     "csv-stringify": "^6.6.0",
+    "firebase-admin": "^13.8.0",
     "ioredis": "^5.10.1",
     "kafkajs": "^2.2.4",
     "mongoose": "^9.2.4",

@@ -20,6 +20,10 @@ Thumbs.db
 .env
 .env.*
 
+# Firebase service account key (contains private credentials)
+config/firebase-service-account.json
+config/*firebase-adminsdk*.json
+
 # Logs
 *.log
 npm-debug.log*
