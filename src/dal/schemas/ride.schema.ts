@@ -4,22 +4,22 @@ import { Document, Types } from 'mongoose';
 @Schema({ timestamps: true })
 export class Ride extends Document {
   @Prop({ type: Types.ObjectId, ref: 'Passenger', required: true })
-  passengerId: Types.ObjectId;
+  passengerId!: Types.ObjectId;
 
   @Prop({ type: Types.ObjectId, ref: 'Driver', required: true })
-  driverId: Types.ObjectId;
+  driverId!: Types.ObjectId;
 
   @Prop({ required: true })
-  startPoint: string;
+  startPoint!: string;
 
   @Prop({ required: true })
-  destination: string;
+  destination!: string;
 
   @Prop({ required: true })
-  price: number;
+  price!: number;
 
   @Prop({ required: true, enum: ['requested', 'accepted', 'in_progress', 'completed', 'cancelled'] })
-  status: string;
+  status!: string;
 }
 
 export const RideSchema = SchemaFactory.createForClass(Ride);

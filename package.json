@@ -1,14 +1,17 @@
 {
-  "name": "lab2",
+  "name": "vendor-payments-platform",
   "version": "1.0.0",
-  "description": "",
+  "description": "City transport and vendor payments analytics platform",
   "main": "index.js",
   "scripts": {
     "build": "nest build",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "generate-csv": "ts-node -r tsconfig-paths/register src/scripts/generate-csv.ts",
-    "import-csv": "ts-node -r tsconfig-paths/register src/scripts/import-csv.ts"
+    "import-csv": "ts-node -r tsconfig-paths/register src/scripts/import-csv.ts",
+    "generate-vendor-payments": "ts-node -r tsconfig-paths/register src/scripts/generate-vendor-payments-csv.ts",
+    "fetch-vendor-payments": "ts-node -r tsconfig-paths/register src/scripts/fetch-vendor-payments.ts",
+    "process-vendor-payments": "ts-node -r tsconfig-paths/register src/scripts/process-vendor-payments.ts"
   },
   "keywords": [],
   "author": "",
@@ -23,6 +26,9 @@
     "class-validator": "^0.15.1",
     "csv-parse": "^6.1.0",
     "csv-stringify": "^6.6.0",
+    "firebase-admin": "^13.8.0",
+    "ioredis": "^5.10.1",
+    "kafkajs": "^2.2.4",
     "mongoose": "^9.2.4",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2"

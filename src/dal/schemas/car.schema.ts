@@ -4,19 +4,19 @@ import { Document, Types } from 'mongoose';
 @Schema({ timestamps: true })
 export class Car extends Document {
   @Prop({ type: Types.ObjectId, ref: 'Driver', required: true })
-  driverId: Types.ObjectId;
+  driverId!: Types.ObjectId;
 
   @Prop({ required: true })
-  carModel: string;
+  carModel!: string;
 
   @Prop({ required: true, unique: true })
-  plateNumber: string;
+  plateNumber!: string;
 
   @Prop({ required: true, enum: ['active', 'maintenance', 'inactive'], default: 'active' })
-  status: string;
+  status!: string;
 
   @Prop()
-  location: string;
+  location!: string;
 }
 
 export const CarSchema = SchemaFactory.createForClass(Car);
